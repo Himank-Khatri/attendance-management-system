@@ -29,6 +29,8 @@ except:
         pickle.dump(data_dictionary, f)
         first_launch = True
 
+name_index = 0
+
 def main_app_format():
     current_working_class = None
     current_working_section = None
@@ -37,7 +39,9 @@ def main_app_format():
 
     class_strength = tk.StringVar()
     class_strength.set('None')
-
+    
+    selected_section = tk.StringVar() 
+    
     def select_class():
 
         def change_class():
@@ -71,7 +75,7 @@ def main_app_format():
         select_class_button.place_forget()
 
         section_options = list(data_dictionary['students'][f'{selected_class.get()}'].keys())
-        selected_section = tk.StringVar() 
+
 
         change_class_button = ttk.Button(main, text='Change', command=change_class, width=7)
         change_class_button.place(x=130, y=20)
@@ -119,9 +123,67 @@ def main_app_format():
 
     
 
+    def start_attendance():
+
+        
+
+        start_attendance_button.place_forget()
+
+        curr_class_list = data_dictionary['students'][f'{selected_class.get()}'][f'{selected_section.get()}']
+        curr_student = tk.StringVar()
+        curr_student.set(f'{curr_class_list[name_index]}:')
+
+        student_name_label = tk.Label(main, textvariable=curr_student, font=myFont)
+        student_name_label.place(x=180, y=188)
+
+        def mark_present():
+
+            global name_index
+
+            name_index += 1
+            curr_student.set(f'{curr_class_list[name_index]}:')
 
 
-if first_launch:
+
+        present_button = ttk.Button(main, text='Present', command=mark_present)
+        present_button.place(x=260, y=188)
+
+
+        def mark_absent():
+
+            global name_index
+
+            name_index += 1
+            curr_student.set(f'{curr_class_list[name_index]}:')
+
+            
+
+        absent_button = ttk.Button(main, text='Present', command=mark_absent)
+        absent_button.place(x=340, y=188)
+
+
+    start_attendance_button = ttk.Button(main, text='Start Attendance', width=20, command=start_attendance)
+    start_attendance_button.place(x=233, y=188)
+
+
+
+
+
+
+    # ttk.Separator(main, orient='horizontal').place(rely=0, relwidth=1)
+    # ttk.Separator(main, orient='vertical').place(relx=0.5, relheight=1)
+    # ttk.Separator(main, orient='horizontal').place(rely=0.5, relwidth=1)
+    # ttk.Separator(main, orient='vertical').place(relx=0.33, relheight=1)
+    # ttk.Separator(main, orient='vertical').place(relx=0.66, relheight=1)
+    # ttk.Separator(main, orient='vertical').place(relx=0.25, relheight=1)
+    # ttk.Separator(main, orient='vertical').place(relx=0.75, relheight=1)
+
+
+    
+
+
+
+if not first_launch:
 
     def add_classroom():
 
@@ -242,6 +304,8 @@ if first_launch:
                 manual_done_button = ttk.Button(manual_tab, text='Done', command=done_button)
                 manual_done_button.place(x=130, y=135)
 
+                bulk_done_button = ttk.Button(bulk_tab, text='Done', command=done_button)
+                bulk_done_button.place(x=130, y=135)
 
 
                 bulk_upload_button = ttk.Button(bulk_tab, text='Upload', command=bulk_upload)
