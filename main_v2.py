@@ -16,7 +16,7 @@ main.geometry(f'600x400')
 main.title("Attendance Wizard")
 main.resizable(False,False)
 
-working_dir = r'D:\Python\project\data.bin'
+working_dir = r'data.bin'
 
 try: 
     with open(working_dir, 'rb') as f:
@@ -141,7 +141,14 @@ def main_app_format():
             global name_index
 
             name_index += 1
-            curr_student.set(f'{curr_class_list[name_index]}:')
+
+            if name_index < int(class_strength.get()):
+
+                curr_student.set(f'{curr_class_list[name_index]}:')
+            else:
+                student_name_label.place_forget()
+                present_button.place_forget()
+                absent_button.place_forget()
 
 
 
@@ -154,11 +161,16 @@ def main_app_format():
             global name_index
 
             name_index += 1
-            curr_student.set(f'{curr_class_list[name_index]}:')
+            if name_index < int(class_strength.get()):
 
+                curr_student.set(f'{curr_class_list[name_index]}:')
+            else:
+                student_name_label.place_forget()
+                present_button.place_forget()
+                absent_button.place_forget()
             
 
-        absent_button = ttk.Button(main, text='Present', command=mark_absent)
+        absent_button = ttk.Button(main, text='Absent', command=mark_absent)
         absent_button.place(x=340, y=188)
 
 
@@ -183,7 +195,7 @@ def main_app_format():
 
 
 
-if not first_launch:
+if first_launch:
 
     def add_classroom():
 
