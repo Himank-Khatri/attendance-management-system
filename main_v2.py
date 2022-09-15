@@ -5,6 +5,7 @@ from tkinter import filedialog
 import pickle
 import csv
 from datetime import datetime
+import pandas as pd
 
 from ctypes import windll
 windll.shcore.SetProcessDpiAwareness(1)
@@ -16,11 +17,11 @@ main.geometry(f'600x400')
 main.title("Attendance Wizard")
 main.resizable(False,False)
 
-working_dir = r'data.bin'
+working_dir = r'D:\Python\project\data.bin'
 
 try: 
     with open(working_dir, 'rb') as f:
-        data_dictionary = pickle.load(f)
+        data_dictionary = pickle.load(f)    
         first_launch = data_dictionary['first_launch']
 
 except:
@@ -30,6 +31,7 @@ except:
         first_launch = True
 
 name_index = 0
+
 
 def main_app_format():
     current_working_class = None
@@ -87,6 +89,7 @@ def main_app_format():
         select_section_button.place(x=240, y=20)
 
 
+
     today_date = datetime.now().strftime("%d-%m-%y")
     class_strength = tk.StringVar()
     class_strength.set('None')
@@ -136,19 +139,25 @@ def main_app_format():
         student_name_label = tk.Label(main, textvariable=curr_student, font=myFont)
         student_name_label.place(x=180, y=188)
 
+        attendance_list = []
         def mark_present():
 
             global name_index
 
-            name_index += 1
+            attendance_list.append('Present')        
 
+            name_index += 1  
+            print(name_index)     
             if name_index < int(class_strength.get()):
-
                 curr_student.set(f'{curr_class_list[name_index]}:')
+
+
             else:
                 student_name_label.place_forget()
                 present_button.place_forget()
                 absent_button.place_forget()
+                print(attendance_list)
+                save_att.place(x=250, y=188)
 
 
 
@@ -160,26 +169,48 @@ def main_app_format():
 
             global name_index
 
-            name_index += 1
-            if name_index < int(class_strength.get()):
+            attendance_list.append('Absent')
 
+            name_index += 1  
+            print(name_index)     
+            if name_index < int(class_strength.get()):
                 curr_student.set(f'{curr_class_list[name_index]}:')
+                
+
             else:
                 student_name_label.place_forget()
                 present_button.place_forget()
                 absent_button.place_forget()
+                print(attendance_list)
+                save_att.place(x=250, y=188)
             
 
         absent_button = ttk.Button(main, text='Absent', command=mark_absent)
         absent_button.place(x=340, y=188)
 
+        def save_att():
+
+            try:
+                df = pd.read_csv(f'{selected_class.get()}-{selected_section.get()}')
+                df[today_date] = attendance_list
+                print('tried,\n',df)
+                df.to_csv(f'{selected_class.get()}-{selected_section.get()}')
+
+            except:
+                df = pd.DataFrame(curr_class_list)
+                df[today_date] = attendance_list
+                print('except,\n',df)
+                df.to_csv(f'{selected_class.get()}-{selected_section.get()}')
+
+            save_att.place_forget()
+
+
+        save_att = ttk.Button(main, text='Save', command=save_att)
+
+
 
     start_attendance_button = ttk.Button(main, text='Start Attendance', width=20, command=start_attendance)
     start_attendance_button.place(x=233, y=188)
-
-
-
-
 
 
     # ttk.Separator(main, orient='horizontal').place(rely=0, relwidth=1)
@@ -189,9 +220,6 @@ def main_app_format():
     # ttk.Separator(main, orient='vertical').place(relx=0.66, relheight=1)
     # ttk.Separator(main, orient='vertical').place(relx=0.25, relheight=1)
     # ttk.Separator(main, orient='vertical').place(relx=0.75, relheight=1)
-
-
-    
 
 
 
