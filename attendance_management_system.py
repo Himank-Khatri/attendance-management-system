@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter.ttk import Style
 import tkinter.font as tkFont
 from tkinter import filedialog
 import pickle
@@ -7,15 +8,14 @@ import csv
 from datetime import datetime
 import pandas as pd
 
-from ctypes import windll
-windll.shcore.SetProcessDpiAwareness(1)
-
 
 main = tk.Tk()
 
 main.geometry(f'600x400')
 main.title("Attendance Wizard")
 main.resizable(False,False)
+window_color = 'paleturquoise2'
+main.configure(background=window_color)
 
 working_dir = r'D:\Python\project\data.bin'
 
@@ -101,7 +101,7 @@ def main_app_format():
     selected_class = tk.StringVar()
 
 
-    class_label = ttk.Label(main, text='Class:', width=12, font=myFont)
+    class_label = ttk.Label(main, text='Class:', width=12, font=myFont, background=window_color)
     class_label.place(x=30, y=20)
 
     class_optionmenu = ttk.OptionMenu(main, selected_class, class_options[0], *class_options)
@@ -111,17 +111,17 @@ def main_app_format():
     select_class_button.place(x=130, y=20)
 
 
-    date_label = ttk.Label(main, text='Date: ', font=myFont)
+    date_label = ttk.Label(main, text='Date: ', font=myFont, background=window_color)
     date_label.place(x=30, y=55)
 
-    date_field = ttk.Label(main, text=today_date, font=myFont)
+    date_field = ttk.Label(main, text=today_date, font=myFont, background=window_color)
     date_field.place(x=80, y=55)
 
 
-    total_students_label = ttk.Label(main, text='Total students:', font=myFont)
+    total_students_label = ttk.Label(main, text='Total students:', font=myFont, background=window_color)
     total_students_label.place(x=30, y=90)
 
-    total_students_feild = ttk.Label(main, textvariable=class_strength, font=myFont)
+    total_students_feild = ttk.Label(main, textvariable=class_strength, font=myFont, background=window_color)
     total_students_feild.place(x=140, y=90)
 
     
@@ -134,7 +134,7 @@ def main_app_format():
         curr_student = tk.StringVar()
         curr_student.set(f'{curr_class_list[name_index]}:')
 
-        student_name_label = tk.Label(main, textvariable=curr_student, font=myFont)
+        student_name_label = tk.Label(main, textvariable=curr_student, font=myFont, background=window_color)
         student_name_label.place(x=160, y=188)
 
         attendance_list = []
@@ -191,16 +191,16 @@ def main_app_format():
             global name_index
 
             try:
-                df = pd.read_csv(f'{selected_class.get()}-{selected_section.get()} {datetime.now().strftime("%B")} {datetime.today().year}')
+                df = pd.read_csv(f'{selected_class.get()}-{selected_section.get()} {datetime.now().strftime("%B")} {datetime.today().year}.csv', index_col=0)
                 df[today_date] = attendance_list
                 print('tried,\n',df)
-                df.to_csv(f'{selected_class.get()}-{selected_section.get()}')
+                df.to_csv(f'{selected_class.get()}-{selected_section.get()} {datetime.now().strftime("%B")} {datetime.today().year}.csv', index=False)
 
             except:
-                df = pd.DataFrame(curr_class_list)
+                df = pd.DataFrame(curr_class_list, columns=['Name'])
                 df[today_date] = attendance_list
                 print('except,\n',df)
-                df.to_csv(f'{selected_class.get()}-{selected_section.get()} {datetime.now().strftime("%B")} {datetime.today().year}')
+                df.to_csv(f'{selected_class.get()}-{selected_section.get()} {datetime.now().strftime("%B")} {datetime.today().year}.csv', index=False)
 
             name_index = 0
 
@@ -281,8 +281,9 @@ if first_launch:
 
                 warning_window = tk.Toplevel()
                 warning_window.geometry('400x150')
+                warning_window.configure(background=window_color)
 
-                done_label = ttk.Label(warning_window, text='Are you sure you want to exit to the main app?', font=tkFont.Font(size=11))
+                done_label = ttk.Label(warning_window, text='Are you sure you want to exit to the main app?', font=tkFont.Font(size=11), background=window_color)
                 done_label.place(x=45, y=30)
 
                 yes_button = ttk.Button(warning_window, text='Yes', command=yes_fun, width=6)
@@ -322,17 +323,28 @@ if first_launch:
                 bulk_info_var = tk.StringVar()
                 bulk_info_var.set('Upload a CSV file.')
 
+                # tabs_section_style = ttk.Style()
+                # tabs_section_style.theme_create( "color", parent="alt", settings={
+                        
+                #         "TNotebook.Tab": {
+                #             "configure": {"background": window_color }} } )
+
+                # tabs_section_style.theme_use("color")
+
                 tabs_section = ttk.Notebook(root)
 
-                manual_tab = ttk.Frame(tabs_section)
-                bulk_tab = ttk.Frame(tabs_section)
+                tabs_style = Style()
+                tabs_style.configure('My.TFrame', background=window_color)
+
+                manual_tab = ttk.Frame(tabs_section, style='My.TFrame')
+                bulk_tab = ttk.Frame(tabs_section, style='My.TFrame')
 
                 tabs_section.add(manual_tab, text='Manual Entry')
                 tabs_section.add(bulk_tab, text='Bulk Entry')
 
                 tabs_section.place(relwidth=0.95, relheight=0.975, relx=0.025, rely=0.0125)
 
-                manual_add_label = ttk.Label(manual_tab, text='Add:', font=myFont)
+                manual_add_label = ttk.Label(manual_tab, text='Add:', font=myFont, background=window_color)
                 manual_add_label.place(x=30, y=40)
 
                 manual_student_entry = ttk.Entry(manual_tab, font=myFont, width=14, textvariable=manual_student_added)
@@ -341,7 +353,7 @@ if first_launch:
                 manual_student_add_button = ttk.Button(manual_tab, text='Add', command=manul_add_student)
                 manual_student_add_button.place(x=250, y=40)
 
-                manual_info_label = ttk.Label(manual_tab, textvariable=manual_info_var, font=tkFont.Font(size=11))
+                manual_info_label = ttk.Label(manual_tab, textvariable=manual_info_var, font=tkFont.Font(size=11), background=window_color)
                 manual_info_label.place(x=55, y=85)
 
                 manual_done_button = ttk.Button(manual_tab, text='Done', command=done_button)
@@ -354,7 +366,7 @@ if first_launch:
                 bulk_upload_button = ttk.Button(bulk_tab, text='Upload', command=bulk_upload)
                 bulk_upload_button.place(x=140, y=45)
 
-                bulk_info_label = ttk.Label(bulk_tab, textvariable=bulk_info_var, font=tkFont.Font(size=11))
+                bulk_info_label = ttk.Label(bulk_tab, textvariable=bulk_info_var, font=tkFont.Font(size=11), background=window_color)
                 bulk_info_label.place(x=130, y=90)
 
 
@@ -371,6 +383,7 @@ if first_launch:
         
         classroom_root = tk.Toplevel(main)
         classroom_root.geometry('400x230')
+        classroom_root.configure(background=window_color)
 
         myFont = tkFont.Font(size=20)
 
@@ -385,13 +398,13 @@ if first_launch:
         classroom_creation_status = tk.StringVar()
         classroom_creation_status.set('')
 
-        class_label = ttk.Label(classroom_root, font=myFont, text='Class:')
+        class_label = ttk.Label(classroom_root, font=myFont, text='Class:', background=window_color)
         class_label.place(x=75, y=25)
 
         class_entry = ttk.Entry(classroom_root, font=myFont, width=10, textvariable=curr_class)
         class_entry.place(x=160, y=25)
 
-        section_label = ttk.Label(classroom_root, font=myFont, text='Section:')
+        section_label = ttk.Label(classroom_root, font=myFont, text='Section:', background=window_color)
         section_label.place(x=95, y=90)
 
         section_entry = ttk.Entry(classroom_root, font=myFont, width=6, textvariable=curr_section)
@@ -400,7 +413,7 @@ if first_launch:
         create_classroom_button = ttk.Button(classroom_root, width=30, text='Create Classroom', command=add_students)
         create_classroom_button.place(x=105, y=150)
 
-        classroom_created_label = ttk.Label(classroom_root, textvariable=classroom_creation_status)
+        classroom_created_label = ttk.Label(classroom_root, textvariable=classroom_creation_status, background=window_color)
         classroom_created_label.place(x=106, y=190)
 
         separator_one = ttk.Separator(classroom_root, orient='horizontal')
