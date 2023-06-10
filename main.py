@@ -14,10 +14,10 @@ main = tk.Tk()
 main.geometry(f'600x400')
 main.title("Attendance Wizard")
 main.resizable(False,False)
-window_color = 'paleturquoise2'
+window_color = 'levander'
 main.configure(background=window_color)
 
-working_dir = r'D:\Python\project\data.bin'
+working_dir = r'data.bin'
 
 try: 
     with open(working_dir, 'rb') as f:
